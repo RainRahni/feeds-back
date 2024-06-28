@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.feeds.model.Article;
 import org.feeds.model.Category;
 import org.feeds.model.Feed;
+import org.feeds.repository.FeedRepository;
 import org.feeds.service.ArticleServiceImpl;
 import org.feeds.service.CategoryServiceImpl;
 import org.feeds.service.FeedServiceImpl;
@@ -32,6 +33,7 @@ public class FeedHandler extends DefaultHandler {
                              String qName, Attributes attributes) throws SAXException {
         if ("item".equalsIgnoreCase(qName)) {
             currentArticle = new Article();
+            currentArticle.setFeed(currentFeed);
         }
         if ("media:content".equalsIgnoreCase(qName)) {
             String url = attributes.getValue("url");
@@ -39,9 +41,12 @@ public class FeedHandler extends DefaultHandler {
         }
         if ("category".equalsIgnoreCase(qName)) {
             String domain = attributes.getValue("domain");
+            System.out.println(domain);
             String name = currentData;
+
+            System.out.println(name);
             Category category = new Category();
-            category.setUrl(domain);
+            category.setLink(domain);
             category.setName(name);
             currentArticle.addCategory(category);
             category.addArticle(currentArticle);
@@ -81,9 +86,10 @@ public class FeedHandler extends DefaultHandler {
                 case "author":
                     currentArticle.setAuthor(currentData);
                     break;
+                default:
+                    currentFeed.addArticle(currentArticle);
+                    articleService.createArticle(currentArticle);
             }
-            currentFeed.addArticle(currentArticle);
-            articleService.createArticle(currentArticle);
         } else if (currentFeed != null) {
             switch (qName) {
                 case "title":
@@ -94,9 +100,9 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 case "description":
                     currentFeed.setDescription(currentData);
+                    feedService.createFeed(currentFeed);
                     break;
             }
-            feedService.createFeed(currentFeed);
         }
     }
 }

@@ -3,6 +3,7 @@ package org.feeds.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,9 +16,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String url;
+    private String link;
     @ManyToMany(mappedBy = "categories")
-    private Set<Article> articles;
+    private Set<Article> articles = new HashSet<>();
     public void addArticle(Article article) {
         articles.add(article);
     }
