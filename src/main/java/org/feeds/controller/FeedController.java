@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("feed")
@@ -14,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeedController {
     private final FeedServiceImpl feedService;
     @PostMapping
-    public void CreateFeed(@RequestBody FeedCreationDTO feedCreationDTO) {
-        feedService.CreateFeed(feedCreationDTO);
+    public void requestFeed(@RequestBody FeedCreationDTO feedCreationDTO) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        feedService.requestFeed(feedCreationDTO);
     }
 }

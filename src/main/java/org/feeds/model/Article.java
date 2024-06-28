@@ -10,11 +10,14 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 @Table(name = "articles")
 public class Article {
     @Id
     private String guid;
     private String title;
+    private String link;
     private Date publishedDate;
     private String description;
     private String author;
@@ -29,5 +32,7 @@ public class Article {
     @ManyToOne
     @JoinColumn(name = "feed_id", nullable = false)
     private Feed feed;
-
+    public void addCategory(Category category) {
+        categories.add(category);
+    }
 }
