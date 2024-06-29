@@ -14,7 +14,9 @@
             <column name="link" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(400)">
+            <column name="description" type="VARCHAR(400)"/>
+            <column name="hex_color" type="VARCHAR(20)">
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <createTable tableName="articles">
@@ -44,6 +46,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="link" type="VARCHAR(255)"/>
+            <column name="hex_color" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="article_category">
             <column autoIncrement="true" name="id" startWith="1" type="INTEGER">

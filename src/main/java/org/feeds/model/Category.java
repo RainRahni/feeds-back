@@ -18,6 +18,7 @@ public class Category {
     private Long id;
     private String name;
     private String link;
+    private String hexColor;
     @ManyToMany(mappedBy = "categories")
     private Set<Article> articles = new HashSet<>();
     public void addArticle(Article article) {

@@ -19,6 +19,7 @@ public class Feed {
     private String title;
     private String link;
     private String description;
+    private String hexColor;
     @OneToMany(mappedBy = "feed")
     private Set<Article> articles = new HashSet<>();
     public void addArticle(Article article) {
