@@ -2,7 +2,9 @@ package org.feeds.service;
 
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.FeedCreationDTO;
+import org.feeds.dto.FeedRequestDTO;
 import org.feeds.handler.FeedHandler;
+import org.feeds.mapper.FeedMapper;
 import org.feeds.model.Feed;
 import org.feeds.repository.FeedRepository;
 import org.feeds.service.interfaces.FeedService;
@@ -18,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class FeedServiceImpl implements FeedService {
     private final FeedRepository feedRepository;
     private final ArticleServiceImpl articleService;
     private final CategoryServiceImpl categoryService;
+    private final FeedMapper feedMapper;
     @Override
     public void requestFeed(FeedCreationDTO feedCreationDTO) throws URISyntaxException, IOException, ParserConfigurationException, SAXException {
         String feedUrl = feedCreationDTO.url();
@@ -38,7 +43,13 @@ public class FeedServiceImpl implements FeedService {
 
         saxParser.parse(new InputSource(url.openStream()), feedHandler);
     }
+    @Override
     public void createFeed(Feed feed) {
         feedRepository.save(feed);
+    }
+    @Override
+    public List<FeedRequestDTO> readAllFeeds() {
+        List<Feed> feeds = feedRepository.findAll();
+        return feedMapper.toFeedRequestDTOList(feeds);
     }
 }

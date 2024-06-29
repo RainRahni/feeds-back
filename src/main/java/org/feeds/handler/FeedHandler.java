@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.feeds.model.Article;
 import org.feeds.model.Category;
 import org.feeds.model.Feed;
-import org.feeds.repository.FeedRepository;
 import org.feeds.service.ArticleServiceImpl;
 import org.feeds.service.CategoryServiceImpl;
 import org.feeds.service.FeedServiceImpl;
@@ -27,7 +26,7 @@ public class FeedHandler extends DefaultHandler {
     private String currentData;
     private Feed currentFeed = new Feed();
     private Article currentArticle;
-
+    private Category currentCategory;
     @Override
     public void startElement(String uri, String localName,
                              String qName, Attributes attributes) throws SAXException {
@@ -39,26 +38,19 @@ public class FeedHandler extends DefaultHandler {
             String url = attributes.getValue("url");
             currentArticle.setImageUrl(url);
         }
-        if ("category".equalsIgnoreCase(qName)) {
+        if ("category".equalsIgnoreCase(qName) && attributes.getLength() > 0) {
             String domain = attributes.getValue("domain");
-            System.out.println(domain);
-            String name = currentData;
-
-            System.out.println(name);
-            Category category = new Category();
-            category.setLink(domain);
-            category.setName(name);
-            currentArticle.addCategory(category);
-            category.addArticle(currentArticle);
-            categoryService.createCategory(category);
+            currentCategory = new Category();
+            currentCategory.setLink(domain);
         }
     }
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        currentData = new String(ch, start, length);
+        currentData = new String(ch, start, length).trim();
     }
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+
         if (currentArticle != null) {
             switch (qName) {
                 case "title":
@@ -85,6 +77,15 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 case "author":
                     currentArticle.setAuthor(currentData);
+                    break;
+                case "category":
+                    if (currentCategory != null) {
+                        currentCategory.setName(currentData);
+                        currentArticle.addCategory(currentCategory);
+                        currentCategory.addArticle(currentArticle);
+                        categoryService.createCategory(currentCategory);
+                        currentCategory = null;
+                    }
                     break;
                 default:
                     currentFeed.addArticle(currentArticle);
