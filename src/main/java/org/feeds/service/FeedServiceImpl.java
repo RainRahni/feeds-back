@@ -9,6 +9,7 @@ import org.feeds.model.Category;
 import org.feeds.model.Feed;
 import org.feeds.repository.FeedRepository;
 import org.feeds.service.interfaces.FeedService;
+import org.feeds.utils.ColorUtils;
 import org.springframework.stereotype.Service;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -47,17 +48,10 @@ public class FeedServiceImpl implements FeedService {
     }
     @Override
     public void createFeed(Feed feed) {
-
+        List<String> usedColors = feedRepository.findAll().stream().map(Feed::getHexColor).toList();
+        String color = ColorUtils.addColor(usedColors);
+        feed.setHexColor(color);
         feedRepository.save(feed);
-    }
-    private String addColor() {
-        List<String> colors = feedRepository.findAll().stream().map(Feed::getHexColor).toList();
-        Random random = new Random();
-        String color = "";
-        while (colors.contains(color)) {
-            color = String.format("#%06x", random.nextInt(0xFFFFFF + 1));
-        }
-        return color;
     }
     @Override
     public List<FeedRequestDTO> readAllFeeds() {
