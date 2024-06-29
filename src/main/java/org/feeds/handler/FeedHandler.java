@@ -50,7 +50,9 @@ public class FeedHandler extends DefaultHandler {
     }
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-
+        if (currentData.isEmpty()) {
+            currentData = null;
+        }
         if (currentArticle != null) {
             switch (qName) {
                 case "title":
