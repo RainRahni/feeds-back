@@ -5,7 +5,6 @@ import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedRequestDTO;
 import org.feeds.handler.FeedHandler;
 import org.feeds.mapper.FeedMapper;
-import org.feeds.model.Category;
 import org.feeds.model.Feed;
 import org.feeds.repository.FeedRepository;
 import org.feeds.service.interfaces.FeedService;
@@ -22,9 +21,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class FeedServiceImpl implements FeedService {
     }
     @Override
     public void createFeed(Feed feed) {
-        List<String> usedColors = feedRepository.findAll().stream().map(Feed::getHexColor).toList();
+        Set<String> usedColors = feedRepository.findAll().stream().map(Feed::getHexColor).collect(Collectors.toSet());
         String color = ColorUtils.addColor(usedColors);
         feed.setHexColor(color);
         feedRepository.save(feed);

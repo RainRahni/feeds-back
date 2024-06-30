@@ -15,6 +15,7 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleMapper articleMapper;
+    @Override
     public void createArticle(Article article) {
         articleRepository.save(article);
     }

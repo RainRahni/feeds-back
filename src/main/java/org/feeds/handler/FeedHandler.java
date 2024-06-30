@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.feeds.model.Article;
 import org.feeds.model.Category;
 import org.feeds.model.Feed;
+import org.feeds.repository.CategoryRepository;
 import org.feeds.service.ArticleServiceImpl;
 import org.feeds.service.CategoryServiceImpl;
 import org.feeds.service.FeedServiceImpl;
@@ -24,7 +25,7 @@ public class FeedHandler extends DefaultHandler {
     private final ArticleServiceImpl articleService;
     private final CategoryServiceImpl categoryService;
     private String currentData;
-    private Feed currentFeed = new Feed();
+    private final Feed currentFeed = new Feed();
     private Article currentArticle;
     private Category currentCategory;
     @Override
@@ -82,10 +83,14 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 case "category":
                     if (currentCategory != null) {
-                        currentCategory.setName(currentData);
-                        currentArticle.addCategory(currentCategory);
-                        currentCategory.addArticle(currentArticle);
-                        categoryService.createCategory(currentCategory);
+                        Category category = categoryService.readCategory(currentData);
+                        if (category == null) {
+                            currentCategory.setName(currentData);
+                            categoryService.createCategory(currentCategory);
+                            category = currentCategory;
+                        }
+                        currentArticle.addCategory(category);
+                        category.addArticle(currentArticle);
                         currentCategory = null;
                     }
                     break;
