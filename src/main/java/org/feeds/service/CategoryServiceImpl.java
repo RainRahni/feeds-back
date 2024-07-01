@@ -1,5 +1,6 @@
 package org.feeds.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.feeds.model.Category;
@@ -19,6 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public void createCategory(Category category) {
         Set<String> usedColors = categoryRepository.findAll().stream().map(Category::getHexColor)
                 .collect(Collectors.toSet());

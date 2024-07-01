@@ -26,6 +26,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final RestTemplate restTemplate;
 
     @Override
+    @Transactional
     public void createArticle(Article article) {
         articleRepository.save(article);
         log.info("Article created: {}", article);

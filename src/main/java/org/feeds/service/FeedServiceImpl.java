@@ -76,6 +76,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public void createFeed(Feed feed) {
         Set<String> usedColors = feedRepository.findAll()
                 .stream()
@@ -95,6 +96,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
         validationService.validateUpdatingFeed(feedUpdateDTO, feedId);
         log.info("Update feed");
@@ -109,6 +111,7 @@ public class FeedServiceImpl implements FeedService {
     }
 
     @Override
+    @Transactional
     public void deleteFeed(Long feedId) {
         log.info("Delete feed");
         validationService.validateDeletingFeed(feedId);

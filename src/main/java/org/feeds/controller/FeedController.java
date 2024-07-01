@@ -6,11 +6,7 @@ import org.feeds.dto.FeedRequestDTO;
 import org.feeds.dto.FeedUpdateDTO;
 import org.feeds.service.FeedServiceImpl;
 import org.springframework.web.bind.annotation.*;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
