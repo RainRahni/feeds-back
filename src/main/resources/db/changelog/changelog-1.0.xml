@@ -14,7 +14,6 @@
             <column name="link" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(400)"/>
             <column name="hex_color" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>

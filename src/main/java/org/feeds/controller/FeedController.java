@@ -19,7 +19,7 @@ import java.util.List;
 public class FeedController {
     private final FeedServiceImpl feedService;
     @PostMapping
-    public void requestFeed(@RequestBody FeedCreationDTO feedCreationDTO) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+    public void requestFeed(@RequestBody FeedCreationDTO feedCreationDTO) {
         feedService.requestFeed(feedCreationDTO);
     }
     @GetMapping
@@ -28,8 +28,7 @@ public class FeedController {
     }
     @PutMapping("/{feedId}")
     public void updateFeed(@RequestBody FeedUpdateDTO feedUpdateDTO,
-                           @PathVariable  Long feedId)
-            throws URISyntaxException, IOException, SAXException, ParserConfigurationException {
+                           @PathVariable  Long feedId) {
         feedService.updateFeed(feedUpdateDTO, feedId);
     }
     @DeleteMapping("/{feedId}")

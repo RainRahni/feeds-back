@@ -34,26 +34,33 @@ public class FeedServiceImpl implements FeedService {
     private final FeedRepository feedRepository;
     private final ArticleServiceImpl articleService;
     private final CategoryServiceImpl categoryService;
+    private final ValidationServiceImpl validationService;
     private final FeedMapper feedMapper;
     @Override
-    public void requestFeed(FeedCreationDTO feedCreationDTO) throws URISyntaxException, IOException, ParserConfigurationException, SAXException {
+    public void requestFeed(FeedCreationDTO feedCreationDTO) {
+        validationService.validateRequestingFeed(feedCreationDTO);
         String feedUrl = feedCreationDTO.link();
         readXML(feedUrl);
     }
-    private void readXML(String feedUrl) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
-        URL url = new URI(feedUrl).toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser saxParser = factory.newSAXParser();
+    private void readXML(String feedUrl)  {
+        try {
+            URL url = new URI(feedUrl).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
 
-        FeedHandler feedHandler = new FeedHandler(this, articleService, categoryService);
+            FeedHandler feedHandler = new FeedHandler(this, articleService, categoryService);
 
-        saxParser.parse(new InputSource(url.openStream()), feedHandler);
+            saxParser.parse(new InputSource(url.openStream()), feedHandler);
+        } catch (URISyntaxException | ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+        }
     }
+    @Override
     @Transactional
-    @Scheduled(cron = "${weather.cron.expression}")
-    public void updateFeedArticles() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+    @Scheduled(cron = "${feed.cron.expression}")
+    public void updateFeedArticles() {
         List<Feed> feeds = feedRepository.findAll();
         for (Feed feed : feeds) {
             articleService.deleteArticles(feed.getId());
@@ -62,7 +69,10 @@ public class FeedServiceImpl implements FeedService {
     }
     @Override
     public void createFeed(Feed feed) {
-        Set<String> usedColors = feedRepository.findAll().stream().map(Feed::getHexColor).collect(Collectors.toSet());
+        Set<String> usedColors = feedRepository.findAll()
+                .stream()
+                .map(Feed::getHexColor)
+                .collect(Collectors.toSet());
         String color = ColorUtils.addColor(usedColors);
         feed.setHexColor(color);
         feedRepository.save(feed);
@@ -73,8 +83,8 @@ public class FeedServiceImpl implements FeedService {
         return feedMapper.toFeedRequestDTOList(feeds);
     }
     @Override
-    public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId)
-            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+    public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
+        validationService.validateUpdatingFeed(feedUpdateDTO, feedId);
         Feed existingFeed = feedRepository.findById(feedId).get();
         if (!existingFeed.getLink().equals(feedUpdateDTO.link())) {
             requestFeed(new FeedCreationDTO(feedUpdateDTO.link()));
@@ -86,9 +96,11 @@ public class FeedServiceImpl implements FeedService {
     }
     @Override
     public void deleteFeed(Long feedId) {
+        validationService.validateDeletingFeed(feedId);
         articleService.deleteArticles(feedId);
         feedRepository.deleteById(feedId);
     }
+    @Override
     public Feed readFeed(String link) {
         return feedRepository.findByLink(link).orElse(null);
     }

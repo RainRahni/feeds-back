@@ -19,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
+    private final ValidationServiceImpl validationService;
     private final ArticleMapper articleMapper;
     private final RestTemplate restTemplate;
     @Override
@@ -36,6 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
     @Override
     public String readArticleContent(String link) {
+        validationService.validateReadingArticleContent(link);
         String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
         String clutterFree = restTemplate.getForObject(decodedLink, String.class);
         return clutterFree;

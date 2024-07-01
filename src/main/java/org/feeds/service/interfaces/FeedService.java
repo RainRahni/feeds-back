@@ -12,11 +12,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public interface FeedService {
-    void requestFeed(FeedCreationDTO feedCreationDTO)
-            throws URISyntaxException, IOException, ParserConfigurationException, SAXException;
+    void requestFeed(FeedCreationDTO feedCreationDTO);
+    void updateFeedArticles();
     void createFeed(Feed feed);
     List<FeedRequestDTO> readAllFeeds();
-    void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId)
-            throws URISyntaxException, IOException, ParserConfigurationException, SAXException;
+    void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId);
     void deleteFeed(Long feedId);
+    Feed readFeed(String link);
 }

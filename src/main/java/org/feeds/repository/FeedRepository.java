@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface FeedRepository extends JpaRepository<Feed, Long> {
     Optional<Feed> findByLink(String link);
+    boolean existsByLink(String link);
 }
