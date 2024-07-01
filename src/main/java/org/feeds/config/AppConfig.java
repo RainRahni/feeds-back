@@ -13,7 +13,8 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:63342");
+                .allowedOrigins("http://localhost:63342")
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
     @Bean
     public RestTemplate restTemplate() {

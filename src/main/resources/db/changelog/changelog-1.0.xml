@@ -26,7 +26,7 @@
             <column name="title" type="VARCHAR(255)"/>
             <column name="link" type="VARCHAR(255)"/>
             <column name="published_date" type="datetime"/>
-            <column name="description" type="VARCHAR(400)"/>
+            <column name="description" type="VARCHAR(500)"/>
             <column name="author" type="VARCHAR(255)"/>
             <column name="image_url" type="VARCHAR(255)"/>
             <column name="feed_id" type="INTEGER">

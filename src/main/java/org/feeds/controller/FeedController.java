@@ -3,6 +3,7 @@ package org.feeds.controller;
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedRequestDTO;
+import org.feeds.dto.FeedUpdateDTO;
 import org.feeds.service.FeedServiceImpl;
 import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
@@ -24,5 +25,15 @@ public class FeedController {
     @GetMapping
     public List<FeedRequestDTO> readAllFeeds() {
         return feedService.readAllFeeds();
+    }
+    @PutMapping("/{feedId}")
+    public void updateFeed(@RequestBody FeedUpdateDTO feedUpdateDTO,
+                           @PathVariable  Long feedId)
+            throws URISyntaxException, IOException, SAXException, ParserConfigurationException {
+        feedService.updateFeed(feedUpdateDTO, feedId);
+    }
+    @DeleteMapping("/{feedId}")
+    public void deleteFeed(@PathVariable  Long feedId) {
+        feedService.deleteFeed(feedId);
     }
 }

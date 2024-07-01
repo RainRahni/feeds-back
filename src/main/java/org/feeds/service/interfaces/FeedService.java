@@ -2,6 +2,7 @@ package org.feeds.service.interfaces;
 
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedRequestDTO;
+import org.feeds.dto.FeedUpdateDTO;
 import org.feeds.model.Feed;
 import org.xml.sax.SAXException;
 
@@ -15,4 +16,7 @@ public interface FeedService {
             throws URISyntaxException, IOException, ParserConfigurationException, SAXException;
     void createFeed(Feed feed);
     List<FeedRequestDTO> readAllFeeds();
+    void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId)
+            throws URISyntaxException, IOException, ParserConfigurationException, SAXException;
+    void deleteFeed(Long feedId);
 }

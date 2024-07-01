@@ -1,6 +1,7 @@
 package org.feeds.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.ArticleRequestDTO;
 import org.feeds.mapper.ArticleMapper;
@@ -38,5 +39,10 @@ public class ArticleServiceImpl implements ArticleService {
         String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
         String clutterFree = restTemplate.getForObject(decodedLink, String.class);
         return clutterFree;
+    }
+    @Override
+    @Transactional
+    public void deleteArticles(Long feedId) {
+        articleRepository.deleteByFeedId(feedId);
     }
 }

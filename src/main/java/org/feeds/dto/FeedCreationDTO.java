@@ -1,4 +1,4 @@
 package org.feeds.dto;
 
-public record FeedCreationDTO(String url) {
+public record FeedCreationDTO(String link) {
 }

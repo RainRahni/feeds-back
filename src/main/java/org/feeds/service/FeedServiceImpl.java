@@ -1,14 +1,17 @@
 package org.feeds.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedRequestDTO;
+import org.feeds.dto.FeedUpdateDTO;
 import org.feeds.handler.FeedHandler;
 import org.feeds.mapper.FeedMapper;
 import org.feeds.model.Feed;
 import org.feeds.repository.FeedRepository;
 import org.feeds.service.interfaces.FeedService;
 import org.feeds.utils.ColorUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -34,7 +37,10 @@ public class FeedServiceImpl implements FeedService {
     private final FeedMapper feedMapper;
     @Override
     public void requestFeed(FeedCreationDTO feedCreationDTO) throws URISyntaxException, IOException, ParserConfigurationException, SAXException {
-        String feedUrl = feedCreationDTO.url();
+        String feedUrl = feedCreationDTO.link();
+        readXML(feedUrl);
+    }
+    private void readXML(String feedUrl) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         URL url = new URI(feedUrl).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -44,6 +50,15 @@ public class FeedServiceImpl implements FeedService {
         FeedHandler feedHandler = new FeedHandler(this, articleService, categoryService);
 
         saxParser.parse(new InputSource(url.openStream()), feedHandler);
+    }
+    @Transactional
+    @Scheduled(cron = "${weather.cron.expression}")
+    public void updateFeedArticles() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        List<Feed> feeds = feedRepository.findAll();
+        for (Feed feed : feeds) {
+            articleService.deleteArticles(feed.getId());
+            readXML(feed.getLink());
+        }
     }
     @Override
     public void createFeed(Feed feed) {
@@ -56,5 +71,25 @@ public class FeedServiceImpl implements FeedService {
     public List<FeedRequestDTO> readAllFeeds() {
         List<Feed> feeds = feedRepository.findAll();
         return feedMapper.toFeedRequestDTOList(feeds);
+    }
+    @Override
+    public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId)
+            throws ParserConfigurationException, SAXException, URISyntaxException, IOException {
+        Feed existingFeed = feedRepository.findById(feedId).get();
+        if (!existingFeed.getLink().equals(feedUpdateDTO.link())) {
+            requestFeed(new FeedCreationDTO(feedUpdateDTO.link()));
+            deleteFeed(feedId);
+            return;
+        }
+        feedMapper.updateModel(feedUpdateDTO, existingFeed);
+        feedRepository.save(existingFeed);
+    }
+    @Override
+    public void deleteFeed(Long feedId) {
+        articleService.deleteArticles(feedId);
+        feedRepository.deleteById(feedId);
+    }
+    public Feed readFeed(String link) {
+        return feedRepository.findByLink(link).orElse(null);
     }
 }

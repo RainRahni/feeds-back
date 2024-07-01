@@ -1,6 +1,5 @@
 package org.feeds.service.interfaces;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.feeds.dto.ArticleRequestDTO;
 import org.feeds.model.Article;
 
@@ -10,4 +9,5 @@ public interface ArticleService {
     void createArticle(Article article);
     List<ArticleRequestDTO> readAllArticles();
     String readArticleContent(String link);
+    void deleteArticles(Long feedId);
 }

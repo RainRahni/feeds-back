@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.feeds.model.Article;
 import org.feeds.model.Category;
 import org.feeds.model.Feed;
-import org.feeds.repository.CategoryRepository;
 import org.feeds.service.ArticleServiceImpl;
 import org.feeds.service.CategoryServiceImpl;
 import org.feeds.service.FeedServiceImpl;
@@ -43,6 +42,10 @@ public class FeedHandler extends DefaultHandler {
             String domain = attributes.getValue("domain");
             currentCategory = new Category();
             currentCategory.setLink(domain);
+        }
+        if ("atom:link".equalsIgnoreCase(qName)) {
+            String link = attributes.getValue("href");
+            currentFeed.setLink(link);
         }
     }
     @Override
@@ -96,7 +99,13 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 default:
                     currentFeed.addArticle(currentArticle);
-                    articleService.createArticle(currentArticle);
+                    Feed existingFeed = feedService.readFeed(currentFeed.getLink());
+                    if (existingFeed == null) {
+                        feedService.createFeed(currentFeed);
+                    } else {
+                        currentArticle.setFeed(existingFeed);
+                        articleService.createArticle(currentArticle);
+                    }
             }
         } else if (currentFeed != null) {
             switch (qName) {
@@ -108,7 +117,10 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 case "description":
                     currentFeed.setDescription(currentData);
-                    feedService.createFeed(currentFeed);
+                    Feed existingFeed = feedService.readFeed(currentFeed.getLink());
+                    if (existingFeed == null) {
+                        feedService.createFeed(currentFeed);
+                    }
                     break;
             }
         }
