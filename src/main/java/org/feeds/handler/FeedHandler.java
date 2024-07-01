@@ -1,6 +1,7 @@
 package org.feeds.handler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.feeds.model.Article;
 import org.feeds.model.Category;
 import org.feeds.model.Feed;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class FeedHandler extends DefaultHandler {
     private final FeedServiceImpl feedService;
     private final ArticleServiceImpl articleService;
@@ -31,6 +33,7 @@ public class FeedHandler extends DefaultHandler {
     public void startElement(String uri, String localName,
                              String qName, Attributes attributes) throws SAXException {
         if ("item".equalsIgnoreCase(qName)) {
+            log.debug("Start of article");
             currentArticle = new Article();
             currentArticle.setFeed(currentFeed);
         }
@@ -58,6 +61,7 @@ public class FeedHandler extends DefaultHandler {
             currentData = null;
         }
         if (currentArticle != null) {
+            log.debug("Set article fields");
             switch (qName) {
                 case "title":
                     currentArticle.setTitle(currentData);
@@ -72,12 +76,12 @@ public class FeedHandler extends DefaultHandler {
                     currentArticle.setDescription(currentData);
                     break;
                 case "pubDate":
-                    Date date;
+                    Date date = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
                     try {
                         date = format.parse(currentData);
                     } catch (ParseException e) {
-                        throw new RuntimeException(e);
+                        log.error(e.getMessage());
                     }
                     currentArticle.setPublishedDate(date);
                     break;
@@ -108,6 +112,7 @@ public class FeedHandler extends DefaultHandler {
                     }
             }
         } else if (currentFeed != null) {
+            log.debug("Set feed fields");
             switch (qName) {
                 case "title":
                     currentFeed.setTitle(currentData);

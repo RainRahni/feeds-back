@@ -2,6 +2,7 @@ package org.feeds.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedRequestDTO;
 import org.feeds.dto.FeedUpdateDTO;
@@ -30,18 +31,22 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FeedServiceImpl implements FeedService {
     private final FeedRepository feedRepository;
     private final ArticleServiceImpl articleService;
     private final CategoryServiceImpl categoryService;
     private final ValidationServiceImpl validationService;
     private final FeedMapper feedMapper;
+
     @Override
     public void requestFeed(FeedCreationDTO feedCreationDTO) {
+        log.info("Request feed");
         validationService.validateRequestingFeed(feedCreationDTO);
         String feedUrl = feedCreationDTO.link();
         readXML(feedUrl);
     }
+
     private void readXML(String feedUrl)  {
         try {
             URL url = new URI(feedUrl).toURL();
@@ -54,19 +59,22 @@ public class FeedServiceImpl implements FeedService {
 
             saxParser.parse(new InputSource(url.openStream()), feedHandler);
         } catch (URISyntaxException | ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
+
     @Override
     @Transactional
     @Scheduled(cron = "${feed.cron.expression}")
     public void updateFeedArticles() {
+        log.info("Update feed using cron");
         List<Feed> feeds = feedRepository.findAll();
         for (Feed feed : feeds) {
             articleService.deleteArticles(feed.getId());
             readXML(feed.getLink());
         }
     }
+
     @Override
     public void createFeed(Feed feed) {
         Set<String> usedColors = feedRepository.findAll()
@@ -76,15 +84,20 @@ public class FeedServiceImpl implements FeedService {
         String color = ColorUtils.addColor(usedColors);
         feed.setHexColor(color);
         feedRepository.save(feed);
+        log.info("Feed created: {}", feed);
     }
+
     @Override
     public List<FeedRequestDTO> readAllFeeds() {
+        log.info("Read all feeds");
         List<Feed> feeds = feedRepository.findAll();
         return feedMapper.toFeedRequestDTOList(feeds);
     }
+
     @Override
     public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
         validationService.validateUpdatingFeed(feedUpdateDTO, feedId);
+        log.info("Update feed");
         Feed existingFeed = feedRepository.findById(feedId).get();
         if (!existingFeed.getLink().equals(feedUpdateDTO.link())) {
             requestFeed(new FeedCreationDTO(feedUpdateDTO.link()));
@@ -94,14 +107,18 @@ public class FeedServiceImpl implements FeedService {
         feedMapper.updateModel(feedUpdateDTO, existingFeed);
         feedRepository.save(existingFeed);
     }
+
     @Override
     public void deleteFeed(Long feedId) {
+        log.info("Delete feed");
         validationService.validateDeletingFeed(feedId);
         articleService.deleteArticles(feedId);
         feedRepository.deleteById(feedId);
     }
+
     @Override
     public Feed readFeed(String link) {
+        log.info("Read single feed with link");
         return feedRepository.findByLink(link).orElse(null);
     }
 }

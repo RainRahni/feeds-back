@@ -16,6 +16,7 @@ public class AppConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:63342")
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

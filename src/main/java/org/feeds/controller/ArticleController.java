@@ -18,6 +18,7 @@ public class ArticleController {
     public List<ArticleRequestDTO> readAllArticles() {
         return articleService.readAllArticles();
     }
+
     @GetMapping("content")
     public String readArticleContent(@RequestParam String link) {
         return articleService.readArticleContent(link);

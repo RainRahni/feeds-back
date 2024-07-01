@@ -1,6 +1,7 @@
 package org.feeds.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.feeds.config.Constants;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedUpdateDTO;
@@ -16,19 +17,24 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ValidationServiceImpl implements ValidationService {
     private final FeedRepository feedRepository;
     private final ArticleRepository articleRepository;
+
     @Override
     public void validateRequestingFeed(FeedCreationDTO feedCreationDTO) {
+        log.info("Validate Requesting Feed Link: {}", feedCreationDTO.link());
         boolean isEmptyLink = feedCreationDTO.link().isBlank();
         boolean isDuplicateLink = feedRepository.existsByLink(feedCreationDTO.link());
         if (isEmptyLink || isDuplicateLink) {
             throw new ValidationException(Constants.INVALID_INPUT_MESSAGE);
         }
     }
+
     @Override
     public void validateUpdatingFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
+        log.info("Validate feed update: {}, for feed with id: {}", feedUpdateDTO, feedId);
         Optional<Feed> optionalFeed = feedRepository.findById(feedId);
         boolean isFeedNull = optionalFeed.isEmpty();
         boolean isFeedEqual = false;
@@ -41,15 +47,19 @@ public class ValidationServiceImpl implements ValidationService {
             throw new ValidationException(Constants.INVALID_INPUT_MESSAGE);
         }
     }
+
     @Override
     public void validateDeletingFeed(Long feedId) {
+        log.info("Validate Deleting Feed With id: {}", feedId);
         boolean isFeedNull = !feedRepository.existsById(feedId);
         if (isFeedNull) {
             throw new ValidationException(Constants.INVALID_INPUT_MESSAGE);
         }
     }
+
     @Override
     public void validateReadingArticleContent(String link) {
+        log.info("Validate Reading article with Link: {}", link);
         boolean isArticleNull = !articleRepository.existsByLink(link);
         if (isArticleNull) {
             throw new ValidationException(Constants.INVALID_INPUT_MESSAGE);

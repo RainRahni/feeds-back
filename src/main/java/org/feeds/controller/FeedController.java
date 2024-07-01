@@ -18,19 +18,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedServiceImpl feedService;
+
     @PostMapping
     public void requestFeed(@RequestBody FeedCreationDTO feedCreationDTO) {
         feedService.requestFeed(feedCreationDTO);
     }
+
     @GetMapping
     public List<FeedRequestDTO> readAllFeeds() {
         return feedService.readAllFeeds();
     }
+
     @PutMapping("/{feedId}")
     public void updateFeed(@RequestBody FeedUpdateDTO feedUpdateDTO,
                            @PathVariable  Long feedId) {
         feedService.updateFeed(feedUpdateDTO, feedId);
     }
+
     @DeleteMapping("/{feedId}")
     public void deleteFeed(@PathVariable  Long feedId) {
         feedService.deleteFeed(feedId);

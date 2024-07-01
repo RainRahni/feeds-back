@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryServiceImpl categoryService;
+
     @GetMapping
     public List<String> readCategoryNames() {
         return categoryService.readCategoryNames();

@@ -3,6 +3,7 @@ package org.feeds.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.feeds.dto.ArticleRequestDTO;
 import org.feeds.mapper.ArticleMapper;
 import org.feeds.model.Article;
@@ -17,14 +18,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final ValidationServiceImpl validationService;
     private final ArticleMapper articleMapper;
     private final RestTemplate restTemplate;
+
     @Override
     public void createArticle(Article article) {
         articleRepository.save(article);
+        log.info("Article created: {}", article);
     }
 
     @Override
@@ -35,13 +39,16 @@ public class ArticleServiceImpl implements ArticleService {
                 .toList();
         return articleMapper.toArticleRequestDTOList(articles);
     }
+
     @Override
     public String readArticleContent(String link) {
         validationService.validateReadingArticleContent(link);
         String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
         String clutterFree = restTemplate.getForObject(decodedLink, String.class);
+        log.info("Get clutter free article");
         return clutterFree;
     }
+
     @Override
     @Transactional
     public void deleteArticles(Long feedId) {
