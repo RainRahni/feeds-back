@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ValidationServiceImpl validationService;
 
     @Override
     @Transactional
     public void createCategory(Category category) {
+        validationService.validateCreatingCategory(category);
         Set<String> usedColors = categoryRepository.findAll().stream().map(Category::getHexColor)
                 .collect(Collectors.toSet());
         String color = ColorUtils.addColor(usedColors);

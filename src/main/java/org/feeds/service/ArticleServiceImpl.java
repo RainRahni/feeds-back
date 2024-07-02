@@ -28,6 +28,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public void createArticle(Article article) {
+        validationService.validateCreatingArticle(article);
         articleRepository.save(article);
         log.info("Article created: {}", article);
     }
@@ -53,6 +54,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public void deleteArticles(Long feedId) {
+        validationService.validateFeedExists(feedId);
         articleRepository.deleteByFeedId(feedId);
     }
 }

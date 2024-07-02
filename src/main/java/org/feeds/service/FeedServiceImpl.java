@@ -78,6 +78,7 @@ public class FeedServiceImpl implements FeedService {
     @Override
     @Transactional
     public void createFeed(Feed feed) {
+        validationService.validateCreatingFeed(feed);
         Set<String> usedColors = feedRepository.findAll()
                 .stream()
                 .map(Feed::getHexColor)
@@ -101,20 +102,21 @@ public class FeedServiceImpl implements FeedService {
         validationService.validateUpdatingFeed(feedUpdateDTO, feedId);
         log.info("Update feed");
         Feed existingFeed = feedRepository.findById(feedId).get();
-        if (!existingFeed.getLink().equals(feedUpdateDTO.link())) {
+        boolean linkChanged = !existingFeed.getLink().equals(feedUpdateDTO.link());
+        if (linkChanged) {
             requestFeed(new FeedCreationDTO(feedUpdateDTO.link()));
             deleteFeed(feedId);
-            return;
+        } else {
+            feedMapper.updateModel(feedUpdateDTO, existingFeed);
+            feedRepository.save(existingFeed);
         }
-        feedMapper.updateModel(feedUpdateDTO, existingFeed);
-        feedRepository.save(existingFeed);
     }
 
     @Override
     @Transactional
     public void deleteFeed(Long feedId) {
         log.info("Delete feed");
-        validationService.validateDeletingFeed(feedId);
+        validationService.validateFeedExists(feedId);
         articleService.deleteArticles(feedId);
         feedRepository.deleteById(feedId);
     }

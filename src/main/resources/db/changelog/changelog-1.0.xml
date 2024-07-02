@@ -45,7 +45,9 @@
             <column name="name" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="link" type="VARCHAR(255)"/>
+            <column name="link" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="hex_color" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
