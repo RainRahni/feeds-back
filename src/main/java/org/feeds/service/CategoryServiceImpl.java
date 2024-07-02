@@ -20,6 +20,10 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ValidationServiceImpl validationService;
 
+    /**
+     * Validate, assign color and save category to the database.
+     * @param category to be saved.
+     */
     @Override
     @Transactional
     public void createCategory(Category category) {
@@ -32,11 +36,20 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Category created: {}", category);
     }
 
+    /**
+     * Read a category with given name from the database.
+     * @param name of the category.
+     * @return category with given name.
+     */
     @Override
     public Category readCategory(String name) {
         return categoryRepository.findByName(name);
     }
 
+    /**
+     * Read all category names in the database.
+     * @return list of category names.
+     */
     @Override
     public List<String> readCategoryNames() {
         return categoryRepository.findAll().stream().map(Category::getName).toList();

@@ -25,6 +25,10 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final RestTemplate restTemplate;
 
+    /**
+     * Validate and save article to database.
+     * @param article to save.
+     */
     @Override
     @Transactional
     public void createArticle(Article article) {
@@ -33,6 +37,10 @@ public class ArticleServiceImpl implements ArticleService {
         log.info("Article created: {}", article);
     }
 
+    /**
+     * Read all articles that are in the database.
+     * @return list of all articles.
+     */
     @Override
     public List<ArticleRequestDTO> readAllArticles() {
         List<Article> articles = articleRepository.findAll();
@@ -42,6 +50,11 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.toArticleRequestDTOList(articles);
     }
 
+    /**
+     * Read clutter-free article content.
+     * @param link to fetch the article from.
+     * @return article content.
+     */
     @Override
     public String readArticleContent(String link) {
         validationService.validateReadingArticleContent(link);
@@ -51,6 +64,10 @@ public class ArticleServiceImpl implements ArticleService {
         return clutterFree;
     }
 
+    /**
+     * Validate and delete all articles with given feed's id.
+     * @param feedId which feed's articles to delete.
+     */
     @Override
     @Transactional
     public void deleteArticles(Long feedId) {

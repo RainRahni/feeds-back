@@ -39,6 +39,10 @@ public class FeedServiceImpl implements FeedService {
     private final ValidationServiceImpl validationService;
     private final FeedMapper feedMapper;
 
+    /**
+     * Validate and request feed with given link.
+     * @param feedCreationDTO where is feed's link.
+     */
     @Override
     @Transactional
     public void requestFeed(FeedCreationDTO feedCreationDTO) {
@@ -64,6 +68,9 @@ public class FeedServiceImpl implements FeedService {
         }
     }
 
+    /**
+     * On every hour's first minute update all feeds' articles.
+     */
     @Override
     @Transactional
     @Scheduled(cron = "${feed.cron.expression}")
@@ -76,6 +83,10 @@ public class FeedServiceImpl implements FeedService {
         }
     }
 
+    /**
+     * Validate, assign color and save feed to the database.
+     * @param feed to be saved to the database.
+     */
     @Override
     @Transactional
     public void createFeed(Feed feed) {
@@ -90,6 +101,10 @@ public class FeedServiceImpl implements FeedService {
         log.info("Feed created: {}", feed);
     }
 
+    /**
+     * Read all the feeds in the database.
+     * @return list of feeds.
+     */
     @Override
     public List<FeedRequestDTO> readAllFeeds() {
         log.info("Read all feeds");
@@ -97,6 +112,11 @@ public class FeedServiceImpl implements FeedService {
         return feedMapper.toFeedRequestDTOList(feeds);
     }
 
+    /**
+     * Update feed with given id with properties that dto has.
+     * @param feedUpdateDTO that has new properties.
+     * @param feedId of feed to be updated.
+     */
     @Override
     @Transactional
     public void updateFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
@@ -113,6 +133,10 @@ public class FeedServiceImpl implements FeedService {
         }
     }
 
+    /**
+     * Delete feed with given id from the database.
+     * @param feedId of the feed to be deleted.
+     */
     @Override
     @Transactional
     public void deleteFeed(Long feedId) {
@@ -122,6 +146,11 @@ public class FeedServiceImpl implements FeedService {
         feedRepository.deleteById(feedId);
     }
 
+    /**
+     * Read feed with given link.
+     * @param link of the feed.
+     * @return feed with given link
+     */
     @Override
     public Feed readFeed(String link) {
         log.info("Read single feed with link");

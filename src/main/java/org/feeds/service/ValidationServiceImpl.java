@@ -28,6 +28,10 @@ public class ValidationServiceImpl implements ValidationService {
     @Value("${fields.missing.message}")
     private String fieldMissingMessage;
 
+    /**
+     * Validate that the link is correct.
+     * @param feedCreationDTO to be validated.
+     */
     @Override
     public void validateRequestingFeed(FeedCreationDTO feedCreationDTO) {
         log.info("Validate Requesting Feed Link: {}", feedCreationDTO.link());
@@ -39,6 +43,10 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that article has necessary properties.
+     * @param article to be validated.
+     */
     @Override
     public void validateCreatingArticle(Article article) {
         boolean isGuidNotPresent = article.getGuid() == null || article.getGuid().isBlank();
@@ -48,6 +56,10 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that feed has necessary properties.
+     * @param feed to be validated.
+     */
     @Override
     public void validateCreatingFeed(Feed feed) {
         boolean isTitleNotPresent = feed.getTitle() == null || feed.getTitle().isBlank();
@@ -57,6 +69,10 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that category has necessary properties.
+     * @param category to be validated.
+     */
     @Override
     public void validateCreatingCategory(Category category) {
         boolean isNameNotPresent = category.getName() == null || category.getName().isBlank();
@@ -66,6 +82,11 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that dto and id are correct.
+     * @param feedUpdateDTO to be validated.
+     * @param feedId to be validated.
+     */
     @Override
     public void validateUpdatingFeed(FeedUpdateDTO feedUpdateDTO, Long feedId) {
         log.info("Validate feed update: {}, for feed with id: {}", feedUpdateDTO, feedId);
@@ -82,6 +103,10 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that id is correct.
+     * @param feedId to be validated.
+     */
     @Override
     public void validateFeedExists(Long feedId) {
         log.info("Validate Existing Feed With id: {}", feedId);
@@ -91,6 +116,10 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validate that link is correct.
+     * @param link to be validated.
+     */
     @Override
     public void validateReadingArticleContent(String link) {
         log.info("Validate Reading article with Link: {}", link);

@@ -1,11 +1,9 @@
 package org.feeds.database;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.service.FeedServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
