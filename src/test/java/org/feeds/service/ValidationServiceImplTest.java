@@ -2,7 +2,6 @@ package org.feeds.service;
 
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedUpdateDTO;
-import org.feeds.model.Article;
 import org.feeds.model.Feed;
 import org.feeds.repository.ArticleRepository;
 import org.feeds.repository.FeedRepository;
@@ -13,12 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.ValidationException;
-
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class ValidationServiceImplTest {
     @Mock
@@ -27,14 +24,15 @@ class ValidationServiceImplTest {
     private ArticleRepository articleRepository;
     @InjectMocks
     private ValidationServiceImpl validationService;
+    private final String feedLink = "https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss";
+    private final Long feedId = 1L;
     @Test
     void Should_ValidateRequestingFeed_When_CorrectInput() {
-        String link = "https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss";
-        FeedCreationDTO feedCreationDTO = new FeedCreationDTO(link);
+        FeedCreationDTO feedCreationDTO = new FeedCreationDTO(feedLink);
 
         validationService.validateRequestingFeed(feedCreationDTO);
 
-        verify(feedRepository, times(1)).existsByLink(link);
+        verify(feedRepository, times(1)).existsByLink(feedLink);
     }
 
     @Test
@@ -48,9 +46,8 @@ class ValidationServiceImplTest {
 
     @Test
     void Should_ThrowException_When_DuplicateLink() {
-        String link = "https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss";
-        FeedCreationDTO feedCreationDTO = new FeedCreationDTO(link);
-        when(feedRepository.existsByLink(link)).thenReturn(true);
+        FeedCreationDTO feedCreationDTO = new FeedCreationDTO(feedLink);
+        when(feedRepository.existsByLink(feedLink)).thenReturn(true);
 
         assertThrows(ValidationException.class,
                 () -> validationService.validateRequestingFeed(feedCreationDTO));
@@ -68,20 +65,20 @@ class ValidationServiceImplTest {
     @Test
     void Should_ValidateUpdatingFeed_When_CorrectInput() {
         Feed feed = Feed.builder()
-                .id(1L)
+                .id(feedId)
                 .title("Tester")
-                .link("https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss")
+                .link(feedLink)
                 .build();
 
         FeedUpdateDTO feedUpdateDTO = FeedUpdateDTO.builder()
                 .title("Tester Update")
                 .build();
 
-        when(feedRepository.findById(1L)).thenReturn(Optional.of(feed));
+        when(feedRepository.findById(feedId)).thenReturn(Optional.of(feed));
 
-        validationService.validateUpdatingFeed(feedUpdateDTO, 1L);
+        validationService.validateUpdatingFeed(feedUpdateDTO, feedId);
 
-        verify(feedRepository, times(1)).findById(1L);
+        verify(feedRepository, times(1)).findById(feedId);
     }
 
     @Test
@@ -91,26 +88,26 @@ class ValidationServiceImplTest {
                 .build();
 
         assertThrows(ValidationException.class,
-                () -> validationService.validateUpdatingFeed(feedUpdateDTO, 1L));
+                () -> validationService.validateUpdatingFeed(feedUpdateDTO, feedId));
     }
 
     @Test
     void Should_ThrowException_When_FeedEqual() {
         Feed feed = Feed.builder()
-                .id(1L)
+                .id(feedId)
                 .title("Tester Update")
-                .link("https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss")
+                .link(feedLink)
                 .build();
 
         FeedUpdateDTO feedUpdateDTO = FeedUpdateDTO.builder()
                 .title("Tester Update")
-                .link("https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss")
+                .link(feedLink)
                 .build();
 
-        when(feedRepository.findById(1L)).thenReturn(Optional.of(feed));
+        when(feedRepository.findById(feedId)).thenReturn(Optional.of(feed));
 
         assertThrows(ValidationException.class,
-                () -> validationService.validateUpdatingFeed(feedUpdateDTO, 1L));
+                () -> validationService.validateUpdatingFeed(feedUpdateDTO, feedId));
     }
 
     @Test

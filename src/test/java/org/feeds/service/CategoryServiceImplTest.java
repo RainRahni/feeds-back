@@ -24,9 +24,11 @@ class CategoryServiceImplTest {
 
     @Test
     void Should_CreateCategory_When_CorrectInput() {
+        String expectedName = "Technology";
+        String expectedLink = "https://flipboard.com/topic/technology";
         Category category = Category.builder()
-                .name("Technology")
-                .link("RandomLink")
+                .name(expectedName)
+                .link(expectedLink)
                 .build();
 
         categoryService.createCategory(category);
@@ -38,7 +40,11 @@ class CategoryServiceImplTest {
         ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
         verify(categoryRepository).save(categoryCaptor.capture());
         Category savedCategory = categoryCaptor.getValue();
-        assertEquals("Technology", savedCategory.getName());
-        assertEquals("RandomLink", savedCategory.getLink());
+
+        String actualName = savedCategory.getName();
+        String actualLink = savedCategory.getLink();
+
+        assertEquals(expectedName, actualName);
+        assertEquals(expectedLink, actualLink);
     }
 }

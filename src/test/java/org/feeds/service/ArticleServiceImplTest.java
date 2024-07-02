@@ -25,10 +25,11 @@ class ArticleServiceImplTest {
 
     @Test
     void Should_CreateArticle_When_CorrectInput() {
-        Feed feed = new Feed();
+        String expectedGuid = "flipboard-CFS2ZUrnTSCUx63phD2j9A:a:1376366263-1716494118";
+        Feed expectedFeed =  new Feed();
         Article article = Article.builder()
-                .guid("RandomGuid")
-                .feed(feed)
+                .guid(expectedGuid)
+                .feed(expectedFeed)
                 .build();
 
         articleService.createArticle(article);
@@ -39,7 +40,10 @@ class ArticleServiceImplTest {
         ArgumentCaptor<Article> articleCaptor = ArgumentCaptor.forClass(Article.class);
         verify(articleRepository).save(articleCaptor.capture());
         Article savedArticle = articleCaptor.getValue();
-        assertEquals("RandomGuid", savedArticle.getGuid());
-        assertEquals(feed, savedArticle.getFeed());
+
+        String actualGuid = savedArticle.getGuid();
+        Feed actualFeed = savedArticle.getFeed();
+        assertEquals(expectedGuid, actualGuid);
+        assertEquals(expectedFeed, actualFeed);
     }
 }

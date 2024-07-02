@@ -46,9 +46,10 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-        String responseBody  = result.getResponse().getContentAsString();
+        String actualResponse  = result.getResponse().getContentAsString();
+        String expectedResponse = objectMapper.writeValueAsString(List.of(categoryName));
 
         then(categoryService).should().readCategoryNames();
-        assertEquals(objectMapper.writeValueAsString(List.of(categoryName)),responseBody);
+        assertEquals(expectedResponse, actualResponse);
     }
 }

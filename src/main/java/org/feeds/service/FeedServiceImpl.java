@@ -40,6 +40,7 @@ public class FeedServiceImpl implements FeedService {
     private final FeedMapper feedMapper;
 
     @Override
+    @Transactional
     public void requestFeed(FeedCreationDTO feedCreationDTO) {
         log.info("Request feed");
         validationService.validateRequestingFeed(feedCreationDTO);

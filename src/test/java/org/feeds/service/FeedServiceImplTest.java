@@ -1,11 +1,7 @@
 package org.feeds.service;
 
-import jakarta.persistence.Id;
-import org.feeds.dto.FeedCreationDTO;
 import org.feeds.dto.FeedUpdateDTO;
 import org.feeds.mapper.FeedMapper;
-import org.feeds.mapper.FeedMapperImpl;
-import org.feeds.model.Category;
 import org.feeds.model.Feed;
 import org.feeds.repository.FeedRepository;
 import org.junit.jupiter.api.Test;
@@ -17,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,15 +23,19 @@ class FeedServiceImplTest {
     @Mock
     private FeedMapper feedMapper;
     @Mock
+    private ArticleServiceImpl articleServiceImpl;
+    @Mock
     private FeedRepository feedRepository;
     @InjectMocks
     private FeedServiceImpl feedServiceImpl;
+    private final String expectedLink = "https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss";
 
     @Test
     void Should_CreateFeed_When_CorrectInput() {
+        String expectedTitle = "RandomTitle";
         Feed feed = Feed.builder()
-                .title("RandomTitle")
-                .link("RandomLink")
+                .title(expectedTitle)
+                .link(expectedLink)
                 .build();
 
         doNothing().when(validationServiceImpl).validateCreatingFeed(feed);
@@ -48,8 +48,11 @@ class FeedServiceImplTest {
         ArgumentCaptor<Feed> feedCaptor = ArgumentCaptor.forClass(Feed.class);
         verify(feedRepository).save(feedCaptor.capture());
         Feed savedFeed = feedCaptor.getValue();
-        assertEquals("RandomTitle", savedFeed.getTitle());
-        assertEquals("RandomLink", savedFeed.getLink());
+
+        String actualTitle = savedFeed.getTitle();
+        String actualLink = savedFeed.getLink();
+        assertEquals(expectedTitle, actualTitle);
+        assertEquals(expectedLink, actualLink);
     }
 
     @Test
@@ -57,12 +60,12 @@ class FeedServiceImplTest {
         Long feedId = 1L;
         Feed existingFeed = Feed.builder()
                 .id(feedId)
-                .link("SameLink")
+                .link(expectedLink)
                 .title("SomeTitle")
                 .build();
 
         FeedUpdateDTO updatedFeed = FeedUpdateDTO.builder()
-                .link("SameLink")
+                .link(expectedLink)
                 .title("NewTitle")
                 .build();
 
@@ -84,29 +87,11 @@ class FeedServiceImplTest {
         verify(feedRepository, times(1)).save(feedCaptor.capture());
 
         Feed capturedFeed = feedCaptor.getValue();
-        assertEquals("NewTitle", capturedFeed.getTitle());
-        assertEquals("SameLink", capturedFeed.getLink());
+
+        String actualTitle = capturedFeed.getTitle();
+        String actualLink = capturedFeed.getLink();
+
+        assertEquals("NewTitle", actualTitle);
+        assertEquals(expectedLink, actualLink);
     }
-
-    /*@Test
-    void Should_UpdateFeed_When_LinkDifferent() {
-        Long feedId = 1L;
-        Feed existingFeed = Feed.builder()
-                .id(feedId)
-                .link("SameLink")
-                .title("SomeTitle")
-                .build();
-
-        FeedUpdateDTO updatedFeed = FeedUpdateDTO.builder()
-                .link("New link")
-                .title("NewTitle")
-                .build();
-
-        when(feedRepository.findById(feedId)).thenReturn(Optional.of(existingFeed));
-
-        feedServiceImpl.updateFeed(updatedFeed, feedId);
-
-        verify(validationServiceImpl, times(1)).validateUpdatingFeed(updatedFeed, feedId);
-        verify(feedRepository, times(1)).findById(feedId);
-    }*/
 }

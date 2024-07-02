@@ -2,9 +2,7 @@ package org.feeds.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.feeds.dto.ArticleRequestDTO;
-import org.feeds.model.Article;
 import org.feeds.service.ArticleServiceImpl;
-import org.feeds.service.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArticleController.class)
@@ -48,25 +46,29 @@ class ArticleControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
+        String actualResponse = result.getResponse().getContentAsString();
+        String expectedResponse = objectMapper.writeValueAsString(List.of(article));
 
         then(articleService).should().readAllArticles();
-        assertEquals(objectMapper.writeValueAsString(List.of(article)), responseBody);
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
     void Should_ReadArticleContent_When_SingleArticle() throws Exception {
-        when(articleService.readArticleContent("RandomLink")).thenReturn("Article Content");
+        String articleLink
+                = "https://www.helpnetsecurity.com/2024/05/22/authelia-open-source-authentication-authorization-server/";
+        String expectedResponse = "Article Content";
+        when(articleService.readArticleContent(articleLink)).thenReturn(expectedResponse);
 
         MvcResult result = mockMvc.perform(get("/article/content")
-                        .param("link", "RandomLink")
+                        .param("link", articleLink)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
+        String actualResponse = result.getResponse().getContentAsString();
 
-        then(articleService).should().readArticleContent("RandomLink");
-        assertEquals("Article Content", responseBody);
+        then(articleService).should().readArticleContent(articleLink);
+        assertEquals(expectedResponse, actualResponse);
     }
 }

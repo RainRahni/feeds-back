@@ -68,9 +68,11 @@ class FeedControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
+        String actualResponse = result.getResponse().getContentAsString();
+        String expectedResponse = objectMapper.writeValueAsString(List.of(feedRequestDTO));
+
         then(feedService).should().readAllFeeds();
-        assertEquals(objectMapper.writeValueAsString((List.of(feedRequestDTO))), responseBody);
+        assertEquals(expectedResponse, actualResponse);
     }
 
     @Test
