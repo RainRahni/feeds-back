@@ -1,7 +1,6 @@
 package org.feeds.service;
 
 import org.feeds.model.Article;
-import org.feeds.model.Category;
 import org.feeds.model.Feed;
 import org.feeds.repository.ArticleRepository;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceImplTest {

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+    <channel>
+        <title>Feed</title>
+        <link>https://flipboard.com/@raimoseero/feed-nii8kd0sz</link>
+        <atom:link href="https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss" rel="self" type="application/rss+xml"/>
+        <description/>
+        <generator>Flipboard</generator>
+        <item>
+            <title>Authelia: Open-source authentication and authorization server - Help Net Security</title>
+            <link>https://www.helpnetsecurity.com/2024/05/22/authelia-open-source-authentication-authorization-server/</link>
+            <guid isPermaLink="false">flipboard-CFS2ZUrnTSCUx63phD2j9A:a:1376366263-1716494118</guid>
+            <pubDate>Thu, 23 May 2024 19:55:18 GMT</pubDate>
+            <description>Authelia is an open-source authentication and authorization server that offers 2FA and SSO for applications through a web portal. It works alongside …</description>
+            <source url="https://flipboard.com/@raimoseero/feed-nii8kd0sz">Feed</source>
+            <category/>
+            <author>Mirko Zorz</author>
+            <response/>
+            <media:content url="https://ic-cdn.flipboard.com/helpnetsecurity.com/7e6d34bc8f64238cf713645c92ab40bac52c4b2c/_xlarge.webp" medium="image" width="1456" height="816"/>
+        </item>
+    </channel>
+</rss>

@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.feeds.dto.FeedCreationDTO;
 import org.feeds.service.FeedServiceImpl;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,7 @@ public class DatabaseSeeder {
      * Seed applications to the database.
      */
     @PostConstruct
+    @Profile("!test")
     public void seedFeed() {
         FeedCreationDTO feedCreationDTO
                 = new FeedCreationDTO("https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss");
