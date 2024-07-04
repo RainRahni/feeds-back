@@ -53,9 +53,10 @@ public class FeedServiceImpl implements FeedService {
     }
 
     private void readXML(String feedUrl)  {
+        HttpURLConnection connection = null;
         try {
             URL url = new URI(feedUrl).toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
@@ -65,6 +66,10 @@ public class FeedServiceImpl implements FeedService {
             saxParser.parse(new InputSource(url.openStream()), feedHandler);
         } catch (URISyntaxException | ParserConfigurationException | SAXException | IOException e) {
             log.error(e.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 
