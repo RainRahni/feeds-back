@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class AppConfig implements WebMvcConfigurer {
-    @Value("$app.frontend.url")
+    @Value("${app.frontend.url}")
     private String frontendUrl;
     @Override
     public void addCorsMappings(CorsRegistry registry) {
