@@ -15,7 +15,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -30,6 +32,7 @@ public class FeedHandler extends DefaultHandler {
     private Article currentArticle;
     private Feed existingFeed;
     private Category currentCategory;
+    private List<Article> articles = new ArrayList<>();
     @Override
     public void startElement(String uri, String localName,
                              String qName, Attributes attributes) throws SAXException {
@@ -60,6 +63,9 @@ public class FeedHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (currentData.isEmpty()) {
             currentData = null;
+        }
+        if (qName.equalsIgnoreCase("channel")) {
+            articleService.createArticles(articles);
         }
         if (currentArticle != null) {
             log.debug("Set article fields");
@@ -102,13 +108,13 @@ public class FeedHandler extends DefaultHandler {
                         currentCategory = null;
                     }
                     break;
-                default:
+                case "item":
                     currentFeed.addArticle(currentArticle);
                     if (existingFeed == null) {
                         feedService.createFeed(currentFeed);
                     } else {
                         currentArticle.setFeed(existingFeed);
-                        articleService.createArticle(currentArticle);
+                        articles.add(currentArticle);
                     }
             }
         } else if (currentFeed != null) {

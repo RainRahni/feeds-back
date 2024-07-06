@@ -26,14 +26,16 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * Validate and save article to database.
-     * @param article to save.
+     * @param articles to save.
      */
     @Override
     @Transactional
-    public void createArticle(Article article) {
-        validationService.validateCreatingArticle(article);
-        articleRepository.save(article);
-        log.info("Article created: {}", article);
+    public void createArticles(List<Article> articles) {
+        for (Article article : articles) {
+            validationService.validateCreatingArticle(article);
+        }
+        articleRepository.saveAll(articles);
+        log.info("Articles created: {}", articles);
     }
 
     /**

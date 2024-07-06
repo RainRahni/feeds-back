@@ -6,6 +6,7 @@ import org.feeds.model.Feed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,6 +19,8 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -52,8 +55,10 @@ class RequestFeedTest {
         FileInputStream fis = new FileInputStream(file);
         saxParser.parse(new InputSource(fis), feedHandler);
 
+        ArgumentCaptor<List<Article>> articleListCaptor = ArgumentCaptor.forClass(List.class);
+
         verify(feedService, times(1)).createFeed(any(Feed.class));
-        verify(articleService, atLeastOnce()).createArticle(any(Article.class));
+        verify(articleService, atLeastOnce()).createArticles(articleListCaptor.capture());
     }
 
 }

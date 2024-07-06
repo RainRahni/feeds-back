@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,15 +34,16 @@ class ArticleServiceImplTest {
                 .feed(expectedFeed)
                 .build();
 
-        articleService.createArticle(article);
+        articleService.createArticles(List.of(article));
 
         verify(validationService, times(1)).validateCreatingArticle(article);
-        verify(articleRepository, times(1)).save(article);
+        verify(articleRepository, times(1)).saveAll(List.of(article));
 
-        ArgumentCaptor<Article> articleCaptor = ArgumentCaptor.forClass(Article.class);
-        verify(articleRepository).save(articleCaptor.capture());
-        Article savedArticle = articleCaptor.getValue();
+        ArgumentCaptor<List<Article>> articleListCaptor = ArgumentCaptor.forClass(List.class);
+        verify(articleRepository).saveAll(articleListCaptor.capture());
+        List<Article> savedArticles = articleListCaptor.getValue();
 
+        Article savedArticle = savedArticles.get(0);
         String actualGuid = savedArticle.getGuid();
         Feed actualFeed = savedArticle.getFeed();
         assertEquals(expectedGuid, actualGuid);
