@@ -15,11 +15,14 @@ edit and delete them. On every hour's first minute runs a cron job, that updates
 
 1. Clone the repository
 
-2. Navigate into the project directory
+2. Add H2 database dependency to run project locally.
 
-3. Run the application:
+3. Navigate into the project directory
+
+4. Run the application:
     - ./gradlew bootrun
 
 * Database is hosted on render.com. For development purposes i used H2 database.
 
 Springdoc: http://localhost:8080/swagger-ui/index.html#/
+
