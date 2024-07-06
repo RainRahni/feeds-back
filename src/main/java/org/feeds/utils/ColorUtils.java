@@ -1,6 +1,5 @@
 package org.feeds.utils;
 
-import java.awt.*;
 import java.util.Random;
 import java.util.Set;
 
@@ -14,15 +13,14 @@ public class ColorUtils {
         } while (usedColors.contains(color));
         return color;
     }
+
     private static String generateHarmoniousColor() {
-        float r = random.nextFloat();
-        float g = random.nextFloat();
-        float b = random.nextFloat();
-        Color randomColor = new Color(r, g, b);
-        Color brighterColor = randomColor.brighter();
+        float r = random.nextFloat() / 2f + 0.5f;
+        float g = random.nextFloat() / 2f + 0.5f;
+        float b = random.nextFloat() / 2f + 0.5f;
         return String.format("#%02X%02X%02X",
-                brighterColor.getRed(),
-                brighterColor.getGreen(),
-                brighterColor.getBlue());
+                Math.round(r * 255),
+                Math.round(g * 255),
+                Math.round(b * 255));
     }
 }
