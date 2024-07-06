@@ -60,5 +60,4 @@ class RequestFeedTest {
         verify(feedService, times(1)).createFeed(any(Feed.class));
         verify(articleService, atLeastOnce()).createArticles(articleListCaptor.capture());
     }
-
 }
