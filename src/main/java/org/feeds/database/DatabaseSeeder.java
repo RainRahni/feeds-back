@@ -13,7 +13,7 @@ public class DatabaseSeeder {
     private final FeedServiceImpl feedServiceImpl;
     /**
      * Seed applications to the database.
-     */
+    */
     @PostConstruct
     @Profile("!test")
     public void seedFeed() {

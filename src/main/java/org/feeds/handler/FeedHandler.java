@@ -28,6 +28,7 @@ public class FeedHandler extends DefaultHandler {
     private String currentData;
     private final Feed currentFeed = new Feed();
     private Article currentArticle;
+    private Feed existingFeed;
     private Category currentCategory;
     @Override
     public void startElement(String uri, String localName,
@@ -103,7 +104,6 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 default:
                     currentFeed.addArticle(currentArticle);
-                    Feed existingFeed = feedService.readFeed(currentFeed.getLink());
                     if (existingFeed == null) {
                         feedService.createFeed(currentFeed);
                     } else {
@@ -122,8 +122,9 @@ public class FeedHandler extends DefaultHandler {
                     break;
                 case "description":
                     currentFeed.setDescription(currentData);
-                    Feed existingFeed = feedService.readFeed(currentFeed.getLink());
+                    existingFeed = feedService.readFeed(currentFeed.getLink());
                     if (existingFeed == null) {
+                        existingFeed = currentFeed;
                         feedService.createFeed(currentFeed);
                     }
                     break;
