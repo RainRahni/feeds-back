@@ -23,6 +23,7 @@ edit and delete them. On every hour's first minute runs a cron job, that updates
     - ./gradlew bootrun
 
 * Database is hosted on render.com. For development purposes i used H2 database.
+Deployed website takes ~5 minutes to start, because renders shuts it down due to inactivity.
 
 Springdoc: http://localhost:8080/swagger-ui/index.html#/
 
